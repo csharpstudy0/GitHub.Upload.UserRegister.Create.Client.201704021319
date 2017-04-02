@@ -21,7 +21,7 @@ class Main:
         self.commiter = cui.uploader.command.repository.Commiter.Commiter(self.__db, self.__client, self.__user, self.__repo)
         self.deleter = cui.uploader.command.repository.Deleter.Deleter(self.__db, self.__client, self.__user, self.__repo)
         self.editor = cui.uploader.command.repository.Editor.Editor(self.__db, self.__client, self.__user, self.__repo)
-        self.agg = cui.uploader.command.aggregate.Aggregate.Aggregate(self.__db)
+        self.agg = cui.uploader.command.aggregate.Aggregate.Aggregate(self.__db, self.__user, self.__repo)
 
     def Run(self):
         if -1 != self.__Create():
