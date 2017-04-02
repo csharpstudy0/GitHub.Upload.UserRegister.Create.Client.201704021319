@@ -52,6 +52,7 @@ class CurrentUser(object):
                 sql = sql + "(',' || Scopes || ',') LIKE '%,{0},%'".format(s) + " OR "
             sql = sql.rstrip(" OR ")
             sql = sql + ')'
+        print(scopes)
         print(sql)
         res = self.__db.account.query(sql)
         ret = None
