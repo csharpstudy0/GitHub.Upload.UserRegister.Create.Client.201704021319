@@ -2,6 +2,8 @@
 #encoding:utf-8
 import os.path
 import configparser
+import shlex
+import subprocess
 import dataset
 import web.service.github.api.v3.CurrentUser
 import web.service.github.api.v3.Client
@@ -18,6 +20,7 @@ import database.src.repo.insert.Main
 
 class Database:
     def __init__(self):
+        self.__path_dir_this = os.path.abspath(os.path.dirname(__file__))
         self.__files = {
             'lang': 'GitHub.Languages.sqlite3',
             'api': 'GitHub.Apis.sqlite3',
@@ -116,10 +119,28 @@ class Database:
                 l = database.src.license.Main.Main(self, client)
                 l.Initialize()
             """
-            # 他者リポジトリDB生成（ファイル、テーブル作成。データ挿入）
+            # 自分アカウントのリポジトリDB生成（ファイル、テーブル作成。データ挿入）
             for account in self.account['Accounts'].find():
                 self.__OpenRepo(account['Username'])
+            # 他者アカウントのリポジトリDB生成（ファイル、テーブル作成。データ挿入）
 
+    def __OpenRepo(self, username):
+        is_create = False
+        path = self.__files['repo'].replace('{user}', username)
+        if not(os.path.isfile(path)):
+            # DBテーブル作成
+            path_sh = os.path.join(self.__path_dir_this, 'src/repo/create/Create.sh')
+            subprocess.call(shlex.split("bash \"{0}\" \"{1}\"".format(path_sh, path)))
+            self.repos[username] = dataset.connect('sqlite:///' + path)
+            # DBレコード挿入
+            user = web.service.github.api.v3.CurrentUser.CurrentUser(self, username)
+            repo = web.service.github.api.v3.CurrentRepository.CurrentRepository(self, "args.path_dir_pj", description="args.description",  homepage="args.homepage")
+            client = web.service.github.api.v3.Client.Client(self, user, repo)
+            inserter = database.src.repo.insert.Main.Main(self, client, user, repo)
+            inserter.Initialize()
+        if not(username in self.repos.keys()):
+            self.repos[username] = dataset.connect('sqlite:///' + path)           
+    """
     def __OpenRepo(self, username):
         path = self.__files['repo'].replace('{user}', username)
         if not(os.path.isfile(path)):
@@ -129,10 +150,12 @@ class Database:
 #                m = database.src.repo.Main.Main(path)
 #                m.Run()
             user = web.service.github.api.v3.CurrentUser.CurrentUser(self, username)
-#                repo = web.service.github.api.v3.CurrentRepository.CurrentRepository(self, args.path_dir_pj, {'description': args.description, 'homepage': args.homepage})
-            client = web.service.github.api.v3.Client.Client(self)
-            inserter = database.src.repo.insert.Main.Main(self, client)
-            inserter.Insert()
+#            repo = web.service.github.api.v3.CurrentRepository.CurrentRepository(self, "args.path_dir_pj", {'description': "args.description", 'homepage': "args.homepage"})
+            repo = web.service.github.api.v3.CurrentRepository.CurrentRepository(self, "args.path_dir_pj", description="args.description",  homepage="args.homepage")
+            client = web.service.github.api.v3.Client.Client(self, user, repo)
+            inserter = database.src.repo.insert.Main.Main(self, client, user, repo)
+#            inserter = database.src.repo.insert.Main.Main(self, client)
+            inserter.Initialize()
         if not(username in self.repos.keys()):
             self.repos[username] = dataset.connect('sqlite:///' + path)
-
+    """

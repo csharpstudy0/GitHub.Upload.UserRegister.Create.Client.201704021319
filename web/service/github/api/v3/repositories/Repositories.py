@@ -1,5 +1,5 @@
 #!python3
-#encoding
+#encoding:utf-8
 import requests
 import urllib.parse
 import json
@@ -67,7 +67,7 @@ class Repositories:
             print(url)
             params = self.reqp.update_otp(params)
             print(params)
-            r = requests.get(url, headers=params['headers'], params=params['params'])
+            r = requests.get(url, headers=params['headers'], params=json.dumps(params['params']))
             repos += self.response.Get(r)
             url = self.response.Headers.Link.Next(r)
         return repos

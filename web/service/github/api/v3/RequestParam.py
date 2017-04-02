@@ -53,6 +53,10 @@ class RequestParam:
     一定時間ごとに変化するワンタイムパスワード(OTP)を取得してHttpHeaderに設定する（未実装）
     """
     def update_otp(self, params):
+        secret = self.__user.TwoFactorSecret
+        # SecretからOTPを算出する
+        # X-GitHub-OTPヘッダキーにOTPを設定する
+        """
         otp = self.auth_param.get_otp()
         if None is otp:
             return params
@@ -60,8 +64,9 @@ class RequestParam:
             if not('headers' in params):
                 params['headers'] = {}
             params['headers']['X-GitHub-OTP'] = otp
+        """
         return params
-    
+        
     class AuthParam:
         def __init__(self, db, user):
 #        def __init__(self, data):
@@ -145,7 +150,7 @@ class RequestParam:
             return token
         """
         def get_otp(self):
-            account = self.__db.account['Accounts'].find_one(Username=self.__username)
+            account = self.__db.account['Accounts'].find_one(Username=self.__user.Name)
 #            two_factor = self.__db.account['TwoFactors'].find(AccountId=account['Id'])
             two_factor = self.__db.account['TwoFactors'].find_one(AccountId=account['Id'])
             print('------------------------------')

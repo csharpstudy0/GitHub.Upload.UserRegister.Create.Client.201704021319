@@ -4,13 +4,17 @@ import os.path
 import getpass
 import database.src.repo.insert.command.repositories.Inserter
 class Main:
-    def __init__(self, db, client):
+    def __init__(self, db, client, user, repo):
+#    def __init__(self, db, client):
 #    def __init__(self, data, client):
 #        self.data = data
-        self.db = db
-        self.client = client
-        self.inserter = database.src.repo.insert.command.repositories.Inserter.Inserter(self.db, self.client)
-#        self.inserter = database.src.repo.insert.command.repositories.Inserter.Inserter(self.data, self.client)
+        self.__db = db
+        self.__client = client
+        self.__user = user
+        self.__repo = repo
+        self.inserter = database.src.repo.insert.command.repositories.Inserter.Inserter(self.__db, self.__client, self.__user, self.__repo)
+#        self.inserter = database.src.repo.insert.command.repositories.Inserter.Inserter(self.__db, self.__client)
+#        self.inserter = database.src.repo.insert.command.repositories.Inserter.Inserter(self.data, self.__client)
 
     def Initialize(self):
         self.inserter.Insert()
