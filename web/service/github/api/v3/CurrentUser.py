@@ -52,7 +52,14 @@ class CurrentUser(object):
                 sql = sql + "(',' || Scopes || ',') LIKE '%,{0},%'".format(s) + " OR "
             sql = sql.rstrip(" OR ")
             sql = sql + ')'
-        return self.__db.account.query(sql).next()['AccessToken']
+        print(sql)
+        res = self.__db.account.query(sql)
+        ret = None
+        for r in res:
+            print(r)
+            ret = r
+        return ret
+#        return self.__db.account.query(sql).next()['AccessToken']
 
     # 将来的には拡張したい
     # * OTP対応
