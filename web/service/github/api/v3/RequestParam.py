@@ -88,7 +88,12 @@ class RequestParam:
             print("len(Grants)1: {0}".format(len(api['Grants'])))
             print("len(Grants)2: {0}".format(len(api['Grants'].split(","))))
             if ("Token" in api['AuthMethods']):
-                token = self.__user.GetAccessToken(api['Grants'].split(","))
+                grants = api['Grants'].split(",")
+                if not(None is grants) and 0 == len(grants):
+                    grants = None
+                if not(None is grants) and 1 == len(grants) and '' == grants[0]:
+                    grants = None
+                token = self.__user.GetAccessToken(grants)
 #                token = self.__get_access_token(account['Id'], api['Grants'].split(","))
                 params['headers'] = {"Authorization": "token " + token}
             elif ("ClientId" in api['AuthMethods']):
