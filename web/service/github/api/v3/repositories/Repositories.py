@@ -157,5 +157,6 @@ class Repositories:
         endpoint = endpoint.replace(':owner', username)
         endpoint = endpoint.replace(':repo', repo_name)
         r = requests.get(urllib.parse.urljoin("https://api.github.com", endpoint), headers=params['headers'])
+        print(endpoint)
         return self.response.Get(r)
 
