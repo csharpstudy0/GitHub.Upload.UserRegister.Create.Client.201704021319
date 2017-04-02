@@ -46,7 +46,7 @@ class CurrentUser(object):
     
     def GetAccessToken(self, scopes=None):
         sql = "SELECT * FROM AccessTokens WHERE AccountId == {0}".format(self.__db.account['Accounts'].find_one(Username=self.Name)['Id'])
-        if not(None is scopes):
+        if not(None is scopes) and isinstance(scopes, list) and 0 < len(scopes):
             sql = sql + " AND ("
             for s in scopes:
                 sql = sql + "(',' || Scopes || ',') LIKE '%,{0},%'".format(s) + " OR "
